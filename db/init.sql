@@ -1,0 +1,34 @@
+CREATE TABLE IF NOT EXISTS "user" (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    hashed_password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    bio TEXT
+);
+
+CREATE TABLE IF NOT EXISTS blog (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    author_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS comment (
+    id SERIAL PRIMARY KEY,
+    text TEXT NOT NULL,
+    commenter_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+    blog_id INTEGER NOT NULL REFERENCES blog(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS liketracker (
+    liker_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+    blog_id INTEGER NOT NULL REFERENCES blog(id) ON DELETE CASCADE,
+    PRIMARY KEY (liker_id, blog_id)
+);
+
+CREATE TABLE IF NOT EXISTS userfollow (
+    follower_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+    followed_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+    PRIMARY KEY (follower_id, followed_id)
+);
