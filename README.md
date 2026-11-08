@@ -36,6 +36,18 @@
 
 ---
 
+## 📸 Application Showcase
+
+| 🌟 **Developer Community Feed & Hero Banner** |
+|:---:|
+| ![DEVSPACE Hero Feed](screenshots/devspace_hero_feed.jpg) |
+
+| 📰 **Interactive Articles Grid** | 📖 **Full Article Reader & Authenticated Writer** |
+|:---:|:---:|
+| ![DEVSPACE Article Grid](screenshots/devspace_article_grid.jpg) | ![DEVSPACE Article Reader](screenshots/devspace_reading_view.jpg) |
+
+---
+
 ## ✨ Features
 
 - **🔐 Stateless JWT Authentication**: Passlib password hashing with **Bcrypt** ($2b$ with 12 rounds) and signed HMAC-SHA256 (`HS256`) access tokens.

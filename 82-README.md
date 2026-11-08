@@ -68,6 +68,18 @@ docker compose up --build -d
 
 ---
 
+## 📸 Application Showcase
+
+| 🌟 **Developer Community Feed & Hero Banner** |
+|:---:|
+| ![DEVSPACE Hero Feed](screenshots/devspace_hero_feed.jpg) |
+
+| 📰 **Interactive Articles Grid** | 📖 **Full Article Reader & Authenticated Writer** |
+|:---:|:---:|
+| ![DEVSPACE Article Grid](screenshots/devspace_article_grid.jpg) | ![DEVSPACE Article Reader](screenshots/devspace_reading_view.jpg) |
+
+---
+
 ## 📁 Repository Map
 * `backend/` — FastAPI microservice with modular routers, SQLModel, JWT & Bcrypt.
 * `frontend/` — React 18, Vite, TypeScript, Tailwind CSS, Alpine Nginx.

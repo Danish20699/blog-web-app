@@ -322,6 +322,19 @@ Query PostgreSQL inside the container to verify persistent data storage:
 docker compose exec db psql -U postgres -d blog_db -c "SELECT id, title, author_id FROM blog;"
 ```
 
+### 5.5 Visual Verification & Production Screenshots
+
+The 3-tier containerized stack was verified locally across presentation, business logic, and database layers:
+
+#### Presentation Tier: React 18 + Tailwind CSS on Nginx Alpine (Port 3000)
+| 🌟 **Developer Community Hero & Top Story** |
+|:---:|
+| ![DEVSPACE Hero Feed](screenshots/devspace_hero_feed.jpg) |
+
+| 📰 **Recent Articles Feed** | 📖 **Authenticated Reader & Writer View** |
+|:---:|:---:|
+| ![DEVSPACE Article Grid](screenshots/devspace_article_grid.jpg) | ![DEVSPACE Article Reader](screenshots/devspace_reading_view.jpg) |
+
 ---
 
 ## 🛠️ 6. Operational & Management Commands
