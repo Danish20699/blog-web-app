@@ -1,0 +1,68 @@
+-- =============================================================================
+-- SAMPLE PSQL QUERIES & OPTIMIZED JOINS FOR BENCHMARKING
+-- Matches verventech/blog-web-app/blob/main/scripts/psql-queries-sample.txt
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- 1. PSQL TO DEMO JOIN ON blog/{id} AGGREGATE
+-- Eliminates N+1 query: fetches blog details, author, likes, and comments in 1 single query
+-- -----------------------------------------------------------------------------
+SELECT
+    b.id,
+    b.title,
+    b.content,
+    b.author_id,
+    u.name AS author_name,
+    u.username AS author_username,
+    COALESCE(COUNT(DISTINCT l.liker_id), 0) AS likes_count,
+    COALESCE(COUNT(DISTINCT c.id), 0) AS comments_count
+FROM blog b
+JOIN "user" u ON u.id = b.author_id
+LEFT JOIN liketracker l ON l.blog_id = b.id
+LEFT JOIN comment c ON c.blog_id = b.id
+WHERE b.id = 1
+GROUP BY b.id, u.name, u.username
+LIMIT 1;
+
+
+-- -----------------------------------------------------------------------------
+-- 2. FEED / ALL BLOGS AGGREGATE QUERY
+-- -----------------------------------------------------------------------------
+SELECT
+    b.id,
+    b.title,
+    b.author_id,
+    u.name AS author_name,
+    u.username AS author_username,
+    COALESCE(COUNT(DISTINCT l.liker_id), 0) AS likes_count,
+    COALESCE(COUNT(DISTINCT c.id), 0) AS comments_count
+FROM blog b
+JOIN "user" u ON u.id = b.author_id
+LEFT JOIN liketracker l ON l.blog_id = b.id
+LEFT JOIN comment c ON c.blog_id = b.id
+GROUP BY b.id, u.name, u.username
+ORDER BY b.id DESC;
+
+
+-- -----------------------------------------------------------------------------
+-- 3. PERSONALIZED FEED (Fan-out on Read based on followed creators)
+-- -----------------------------------------------------------------------------
+SELECT
+    b.id,
+    b.title,
+    b.content,
+    b.author_id,
+    u.username AS author_username,
+    COALESCE(COUNT(DISTINCT l.liker_id), 0) AS likes_count,
+    COALESCE(COUNT(DISTINCT c.id), 0) AS comments_count
+FROM blog b
+JOIN "user" u ON u.id = b.author_id
+LEFT JOIN liketracker l ON l.blog_id = b.id
+LEFT JOIN comment c ON c.blog_id = b.id
+WHERE b.author_id IN (
+    SELECT followed_id 
+    FROM userfollow 
+    WHERE follower_id = 1
+)
+GROUP BY b.id, u.username
+ORDER BY b.id DESC;

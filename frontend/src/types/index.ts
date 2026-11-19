@@ -16,6 +16,7 @@ export interface Blog {
   title: string;
   content: string;
   author_id: number;
+  author_name?: string | null;
   likes_count: number;
   comments_count: number;
 }
@@ -24,6 +25,7 @@ export interface Comment {
   id: number;
   text: string;
   commenter_id: number;
+  commenter_name?: string | null;
   blog_id: number;
 }
 

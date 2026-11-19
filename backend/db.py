@@ -21,7 +21,15 @@ if not DATABASE_URL:
 if DATABASE_URL:
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-    engine = create_engine(DATABASE_URL, echo=False)
+    # Iteration 6: Concurrency connection pooling for PostgreSQL
+    engine = create_engine(
+        DATABASE_URL,
+        echo=False,
+        pool_size=20,         # Persistent open connections
+        max_overflow=10,      # Surge connections during traffic spikes
+        pool_timeout=30,      # 30-second queue timeout
+        pool_pre_ping=True,   # Reconnect dropped idle connections
+    )
 else:
     engine = create_engine(
         f"sqlite:///{DB_FILENAME}",

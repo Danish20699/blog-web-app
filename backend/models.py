@@ -1,5 +1,6 @@
 from typing import Optional
 from sqlmodel import Field, SQLModel
+from pydantic import BaseModel
 
 # ==============================================================================
 # DATABASE TABLES (Entities)
@@ -83,8 +84,9 @@ class BlogDetailResponse(SQLModel):
     title: str
     content: str
     author_id: int
-    likes_count: int
-    comments_count: int
+    author_name: Optional[str] = None
+    likes_count: int = 0
+    comments_count: int = 0
 
 
 class CommentCreate(SQLModel):
@@ -95,5 +97,5 @@ class CommentResponse(SQLModel):
     id: int
     text: str
     commenter_id: int
+    commenter_name: Optional[str] = None
     blog_id: int
-

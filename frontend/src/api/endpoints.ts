@@ -20,8 +20,14 @@ export const api = {
   },
 
   blogs: {
-    list: async (): Promise<Blog[]> =>
-      apiClient('/blogs', { method: 'GET', auth: false }),
+    list: async (params?: { limit?: number; cursor?: number; offset?: number }): Promise<Blog[]> => {
+      const searchParams = new URLSearchParams();
+      if (params?.limit) searchParams.set('limit', params.limit.toString());
+      if (params?.cursor !== undefined) searchParams.set('cursor', params.cursor.toString());
+      if (params?.offset !== undefined) searchParams.set('offset', params.offset.toString());
+      const query = searchParams.toString() ? `?${searchParams.toString()}` : '';
+      return apiClient(`/blogs${query}`, { method: 'GET', auth: false });
+    },
 
     get: async (id: number): Promise<Blog> =>
       apiClient(`/blog/${id}`, { method: 'GET', auth: false }),
@@ -40,5 +46,8 @@ export const api = {
 
     addComment: async (blogId: number, data: CreateCommentPayload): Promise<Comment> =>
       apiClient(`/blog/${blogId}/comment`, { method: 'POST', body: JSON.stringify(data) }),
+
+    deleteComment: async (commentId: number): Promise<{ message: string }> =>
+      apiClient(`/comment/${commentId}`, { method: 'DELETE' }),
   },
 };

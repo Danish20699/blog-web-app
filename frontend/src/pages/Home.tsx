@@ -13,10 +13,14 @@ interface HomeProps {
 export const Home: React.FC<HomeProps> = ({ onNotify, newBlogCreated, searchQuery }) => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 12;
 
-  const loadBlogs = async () => {
+  const loadBlogs = async (pageNumber: number = page) => {
+    setLoading(true);
     try {
-      const data = await api.blogs.list();
+      const offset = (pageNumber - 1) * PAGE_SIZE;
+      const data = await api.blogs.list({ limit: PAGE_SIZE, offset });
       setBlogs(data);
     } catch (err: any) {
       onNotify(err.message, 'error');
@@ -26,7 +30,7 @@ export const Home: React.FC<HomeProps> = ({ onNotify, newBlogCreated, searchQuer
   };
 
   useEffect(() => {
-    loadBlogs();
+    loadBlogs(page);
   }, []);
 
   useEffect(() => {
@@ -156,6 +160,41 @@ export const Home: React.FC<HomeProps> = ({ onNotify, newBlogCreated, searchQuer
                 />
               ))}
             </div>
+
+            {/* Pagination Controls (Iteration 6) */}
+            {!searchQuery && (
+              <div className="mt-12 flex items-center justify-between border-t border-stone-200 pt-6 font-mono text-xs dark:border-stone-800">
+                <button
+                  onClick={() => {
+                    if (page > 1) {
+                      const prev = page - 1;
+                      setPage(prev);
+                      loadBlogs(prev);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  disabled={page === 1 || loading}
+                  className="rounded-md border border-stone-300 px-4 py-2 font-bold text-stone-700 hover:bg-stone-100 disabled:opacity-30 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800 transition-colors"
+                >
+                  ← Previous Page
+                </button>
+                <span className="font-bold text-stone-600 dark:text-stone-400">
+                  Page {page}
+                </span>
+                <button
+                  onClick={() => {
+                    const next = page + 1;
+                    setPage(next);
+                    loadBlogs(next);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  disabled={blogs.length < PAGE_SIZE || loading}
+                  className="rounded-md border border-stone-300 px-4 py-2 font-bold text-stone-700 hover:bg-stone-100 disabled:opacity-30 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800 transition-colors"
+                >
+                  Next Page →
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -79,6 +79,17 @@ export const PostDetail: React.FC<PostDetailProps> = ({ onNotify }) => {
     }
   };
 
+  const handleDeleteComment = async (commentId: number) => {
+    if (!window.confirm('Delete this comment?')) return;
+    try {
+      await api.blogs.deleteComment(commentId);
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+      onNotify('Comment deleted successfully.', 'success');
+    } catch (err: any) {
+      onNotify(err.message, 'error');
+    }
+  };
+
   if (loading) {
     return (
       <div className="py-32 text-center font-mono text-xs text-stone-400">
@@ -131,11 +142,11 @@ export const PostDetail: React.FC<PostDetailProps> = ({ onNotify }) => {
       {/* Author Byline */}
       <div className="mt-6 flex items-center space-x-3 border-y border-stone-200 py-4 dark:border-stone-800">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black font-mono text-sm font-bold text-white dark:bg-white dark:text-black">
-          #{blog.author_id}
+          {blog.author_name ? blog.author_name.charAt(0).toUpperCase() : `#${blog.author_id}`}
         </div>
         <div>
           <div className="font-mono text-xs font-bold text-stone-900 dark:text-stone-100">
-            Developer #{blog.author_id}
+            {blog.author_name || `Developer #${blog.author_id}`}
           </div>
           <div className="text-[11px] text-stone-400 font-mono">
             Published on DEVSPACE Community
@@ -191,7 +202,12 @@ export const PostDetail: React.FC<PostDetailProps> = ({ onNotify }) => {
         </div>
 
         <div className="mt-8">
-          <CommentList comments={comments} isLoading={loadingComments} />
+          <CommentList
+            comments={comments}
+            isLoading={loadingComments}
+            currentUserId={user?.id}
+            onDeleteComment={handleDeleteComment}
+          />
         </div>
       </section>
     </article>
