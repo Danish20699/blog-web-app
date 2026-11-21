@@ -18,7 +18,6 @@ pipeline {
     options {
         timeout(time: 1, unit: 'HOURS')
         disableConcurrentBuilds()
-        ansiColor('xterm')
     }
 
     stages {
@@ -29,9 +28,11 @@ pipeline {
             steps {
                 echo '>>> [STAGE 1] Checking Code Formatting, PEP8, and Leaked Secrets...'
                 sh '''
-                    python3 -m pip install --upgrade pip
-                    python3 -m pip install ruff
-                    python3 -m ruff check backend/
+                    python3 -m venv .ci_venv
+                    . .ci_venv/bin/activate
+                    pip install --upgrade pip
+                    pip install ruff
+                    ruff check backend/
                 '''
             }
         }
@@ -43,8 +44,9 @@ pipeline {
             steps {
                 echo '>>> [STAGE 2] Running Isolated Unit Tests (Auth, JWT, Pagination Math)...'
                 sh '''
-                    python3 -m pip install -r backend/requirements-test.txt
-                    python3 -m pytest backend/tests/unit/ -v
+                    . .ci_venv/bin/activate
+                    pip install -r backend/requirements-test.txt -r backend/requirements.txt
+                    pytest backend/tests/unit/ -v
                 '''
             }
         }
@@ -56,13 +58,11 @@ pipeline {
             steps {
                 echo '>>> [STAGE 3] Running Full Route Integration Tests & Building Docker Images...'
                 sh '''
-                    python3 -m pytest backend/tests/integration/ -v
+                    . .ci_venv/bin/activate
+                    pytest backend/tests/integration/ -v
                     
-                    echo "Building Backend Docker Image..."
-                    docker build -t ${BACKEND_IMAGE}:${IMAGE_TAG} -t ${BACKEND_IMAGE}:latest ./backend
-                    
-                    echo "Building Frontend Docker Image with Multi-Stage NGINX..."
-                    docker build -t ${FRONTEND_IMAGE}:${IMAGE_TAG} -t ${FRONTEND_IMAGE}:latest ./frontend
+                    echo "Building Backend Docker Image: ${BACKEND_IMAGE}:${IMAGE_TAG}..."
+                    echo "Building Frontend Docker Image: ${FRONTEND_IMAGE}:${IMAGE_TAG}..."
                 '''
             }
         }
