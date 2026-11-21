@@ -15,8 +15,9 @@ from sqlmodel.pool import StaticPool
 backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, backend_dir)
 
-from db import get_session
 from main import app
+
+from db import get_session
 
 # Ephemeral in-memory SQLite database for integration tests
 TEST_DATABASE_URL = "sqlite:///:memory:"
