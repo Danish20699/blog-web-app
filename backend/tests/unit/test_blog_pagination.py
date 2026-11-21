@@ -3,14 +3,20 @@ Unit Tests for Blog App (Stage 2 in CI/CD Pipeline)
 Tests isolated logic in memory with zero database / network dependencies.
 """
 
-import sys
 import os
+import sys
 
 # Add backend directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from jose import jwt
-from security import ALGORITHM, SECRET_KEY, create_access_token, hash_password, verify_password
+from security import (
+    ALGORITHM,
+    SECRET_KEY,
+    create_access_token,
+    hash_password,
+    verify_password,
+)
 
 
 def test_password_hashing_and_verification():
@@ -20,7 +26,7 @@ def test_password_hashing_and_verification():
 
     # Hash should not equal raw password
     assert hashed != raw_password
-    assert hashed.startswith("$2b$") or hashed.startswith("$2a$")
+    assert hashed.startswith(("$2b$", "$2a$"))
 
     # Correct password verifies True
     assert verify_password(raw_password, hashed) is True
@@ -47,7 +53,7 @@ def test_jwt_token_generation_and_payload():
 def test_tampered_jwt_token_rejection():
     """Unit Test: Tampering with a JWT payload must fail cryptographic signature check."""
     token = create_access_token(data={"sub": "alice_dev"})
-    header, payload, signature = token.split(".")
+    header, _payload, signature = token.split(".")
 
     # Hacker tampers payload by substituting another user
     tampered_token = f"{header}.eyJzdWIiOiAiaGFja2VyIn0.{signature}"

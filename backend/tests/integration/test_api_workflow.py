@@ -3,20 +3,20 @@ Integration Tests for Blog App (Stage 3 in CI/CD Pipeline)
 Tests full API route workflows interacting with an isolated in-memory test database.
 """
 
-import sys
 import os
+import sys
+
 import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import SQLModel, Session, create_engine
+from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 
 # Add backend directory to path
 backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, backend_dir)
 
-from main import app
 from db import get_session
-
+from main import app
 
 # Ephemeral in-memory SQLite database for integration tests
 TEST_DATABASE_URL = "sqlite:///:memory:"
