@@ -1,8 +1,5 @@
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlmodel import Session, func, select
 
-from db import get_session
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from models import (
     Blog,
     BlogCreate,
@@ -14,6 +11,9 @@ from models import (
     User,
 )
 from security import get_current_user
+from sqlmodel import Session, func, select
+
+from db import get_session
 
 router = APIRouter(tags=["Blogs & Comments"])
 
@@ -71,11 +71,11 @@ def getBlog(blog_id: int, session: Session = Depends(get_session)):
     )
 
 
-@router.get("/blogs", response_model=List[BlogDetailResponse])
+@router.get("/blogs", response_model=list[BlogDetailResponse])
 def getAllBlogs(
     limit: int = Query(default=20, ge=1, le=100, description="Items per page (max 100)"),
-    cursor: Optional[int] = Query(default=None, description="Cursor: Blog ID for keyset pagination"),
-    offset: Optional[int] = Query(default=None, ge=0, description="Offset: Skip count for numbered pagination"),
+    cursor: int | None = Query(default=None, description="Cursor: Blog ID for keyset pagination"),
+    offset: int | None = Query(default=None, ge=0, description="Offset: Skip count for numbered pagination"),
     session: Session = Depends(get_session),
 ):
     # High-Performance Feed Query with SQL JOIN and Dual Pagination (Cursor & Offset)
@@ -172,7 +172,7 @@ def addComment(
     )
 
 
-@router.get("/blog/{blog_id}/comments", response_model=List[CommentResponse])
+@router.get("/blog/{blog_id}/comments", response_model=list[CommentResponse])
 def getBlogComments(blog_id: int, session: Session = Depends(get_session)):
     if not session.get(Blog, blog_id):
         raise HTTPException(status_code=404, detail="Blog not found")

@@ -1,6 +1,5 @@
-from typing import Optional
+
 from sqlmodel import Field, SQLModel
-from pydantic import BaseModel
 
 # ==============================================================================
 # DATABASE TABLES (Entities)
@@ -8,23 +7,23 @@ from pydantic import BaseModel
 
 
 class User(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     name: str = Field(nullable=False)
     username: str = Field(unique=True, index=True, nullable=False)
     hashed_password: str = Field(nullable=False)
     email: str = Field(unique=True, index=True, nullable=False)
-    bio: Optional[str] = Field(default=None)
+    bio: str | None = Field(default=None)
 
 
 class Blog(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     title: str = Field(nullable=False)
     content: str = Field(nullable=False)
     author_id: int = Field(foreign_key="user.id", nullable=False)
 
 
 class Comment(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     text: str = Field(nullable=False)
     commenter_id: int = Field(foreign_key="user.id", nullable=False)
     blog_id: int = Field(foreign_key="blog.id", nullable=False)
@@ -50,7 +49,7 @@ class UserCreate(SQLModel):
     username: str
     password: str
     email: str
-    bio: Optional[str] = None
+    bio: str | None = None
 
 
 class UserGet(SQLModel):
@@ -58,15 +57,15 @@ class UserGet(SQLModel):
     name: str
     username: str
     email: str
-    bio: Optional[str] = None
+    bio: str | None = None
 
 
 class UserPut(SQLModel):
     name: str
     username: str
-    password: Optional[str] = None
+    password: str | None = None
     email: str
-    bio: Optional[str] = None
+    bio: str | None = None
 
 
 class Token(SQLModel):
@@ -84,7 +83,7 @@ class BlogDetailResponse(SQLModel):
     title: str
     content: str
     author_id: int
-    author_name: Optional[str] = None
+    author_name: str | None = None
     likes_count: int = 0
     comments_count: int = 0
 
@@ -97,5 +96,5 @@ class CommentResponse(SQLModel):
     id: int
     text: str
     commenter_id: int
-    commenter_name: Optional[str] = None
+    commenter_name: str | None = None
     blog_id: int

@@ -1,6 +1,7 @@
 import os
 import sqlite3
 from pathlib import Path
+
 from sqlmodel import Session, create_engine
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -52,7 +53,7 @@ def init_db():
             try:
                 with open(sql_path, "r", encoding="utf-8") as file:
                     conn.executescript(file.read())
-            except Exception:
+            except (sqlite3.Error, OSError):
                 pass
         conn.commit()
         conn.close()

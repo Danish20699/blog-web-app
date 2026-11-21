@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from models import User, UserCreate, UserFollow, UserGet, UserPut
+from security import get_current_user, hash_password
 from sqlmodel import Session, func, select
 
 from db import get_session
-from models import User, UserCreate, UserFollow, UserGet, UserPut
-from security import get_current_user, hash_password
 
 router = APIRouter(tags=["Users"])
 
@@ -57,17 +57,15 @@ def editCurrentUser(
     clean_username = updated_user.username.strip().lower()
     clean_email = updated_user.email.strip().lower()
 
-    if clean_username != current_user.username:
-        if session.exec(
-            select(User).where(func.lower(User.username) == clean_username)
-        ).first():
-            raise HTTPException(status_code=409, detail="Username already in use")
+    if clean_username != current_user.username and session.exec(
+        select(User).where(func.lower(User.username) == clean_username)
+    ).first():
+        raise HTTPException(status_code=409, detail="Username already in use")
 
-    if clean_email != current_user.email:
-        if session.exec(
-            select(User).where(func.lower(User.email) == clean_email)
-        ).first():
-            raise HTTPException(status_code=409, detail="Email already in use")
+    if clean_email != current_user.email and session.exec(
+        select(User).where(func.lower(User.email) == clean_email)
+    ).first():
+        raise HTTPException(status_code=409, detail="Email already in use")
 
     current_user.name = updated_user.name.strip()
     current_user.username = clean_username

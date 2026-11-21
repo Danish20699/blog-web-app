@@ -1,0 +1,7 @@
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+# B008 is FastAPI's official Dependency Injection pattern (Depends in function defaults)
+ignore = ["B008", "S110", "BLE001"]

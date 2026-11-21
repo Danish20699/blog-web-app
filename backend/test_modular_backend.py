@@ -1,10 +1,11 @@
-import sys
 import os
+import sys
 
 # Ensure backend directory is in python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi.testclient import TestClient
+
 from main import app
 
 client = TestClient(app)
@@ -109,7 +110,7 @@ def test_modular_app():
     r = client.post(f"/user/{alice_id}/follow", headers=bob_headers)
     assert r.status_code == 200
     assert r.json()["following"] is True
-    print(f"[PASS] Follow registered! Bob is now following Alice.")
+    print("[PASS] Follow registered! Bob is now following Alice.")
 
     # 11. Alice successfully deletes her own blog
     print("\n[11] Alice deleting her own blog post...")
