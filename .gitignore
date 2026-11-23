@@ -31,3 +31,6 @@ blog_app.db
 
 # Docker
 .docker/
+
+# CI Virtual Environment (Jenkins creates this during pipeline runs)
+.ci_venv/
