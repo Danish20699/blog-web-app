@@ -10,7 +10,6 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from jose import jwt
-
 from routes.blogs import calculate_reading_metrics
 from security import (
     ALGORITHM,
