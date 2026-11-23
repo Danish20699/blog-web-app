@@ -19,6 +19,8 @@ export interface Blog {
   author_name?: string | null;
   likes_count: number;
   comments_count: number;
+  reading_time?: number;
+  word_count?: number;
 }
 
 export interface Comment {

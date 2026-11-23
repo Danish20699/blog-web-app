@@ -86,6 +86,8 @@ class BlogDetailResponse(SQLModel):
     author_name: str | None = None
     likes_count: int = 0
     comments_count: int = 0
+    reading_time: int = 1
+    word_count: int = 0
 
 
 class CommentCreate(SQLModel):

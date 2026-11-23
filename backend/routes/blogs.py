@@ -18,6 +18,17 @@ from db import get_session
 router = APIRouter(tags=["Blogs & Comments"])
 
 
+def calculate_reading_metrics(content: str) -> tuple[int, int]:
+    """Calculates reading time in minutes and total word count.
+
+    Assumes average human reading speed of 200 words per minute.
+    Returns (reading_time_minutes, word_count), minimum 1 minute.
+    """
+    words = len(content.split())
+    reading_time = max(1, (words + 199) // 200) if words > 0 else 1
+    return reading_time, words
+
+
 @router.post("/blog", response_model=Blog, status_code=status.HTTP_201_CREATED)
 def createBlog(
     blog: BlogCreate,
@@ -59,6 +70,7 @@ def getBlog(blog_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Blog not found")
 
     id, title, content, author_id, author_name, likes_count, comments_count = result
+    reading_time, word_count = calculate_reading_metrics(content)
 
     return BlogDetailResponse(
         id=id,
@@ -68,6 +80,8 @@ def getBlog(blog_id: int, session: Session = Depends(get_session)):
         author_name=author_name,
         likes_count=likes_count,
         comments_count=comments_count,
+        reading_time=reading_time,
+        word_count=word_count,
     )
 
 
@@ -107,18 +121,23 @@ def getAllBlogs(
     statement = statement.limit(min(limit, 100))
     results = session.exec(statement).all()
 
-    return [
-        BlogDetailResponse(
-            id=row[0],
-            title=row[1],
-            content=row[2],
-            author_id=row[3],
-            author_name=row[4],
-            likes_count=row[5],
-            comments_count=row[6],
+    responses = []
+    for row in results:
+        reading_time, word_count = calculate_reading_metrics(row[2])
+        responses.append(
+            BlogDetailResponse(
+                id=row[0],
+                title=row[1],
+                content=row[2],
+                author_id=row[3],
+                author_name=row[4],
+                likes_count=row[5],
+                comments_count=row[6],
+                reading_time=reading_time,
+                word_count=word_count,
+            )
         )
-        for row in results
-    ]
+    return responses
 
 
 @router.delete("/blog/{blog_id}")

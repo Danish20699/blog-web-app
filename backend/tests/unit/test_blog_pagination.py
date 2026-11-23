@@ -10,6 +10,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from jose import jwt
+
+from routes.blogs import calculate_reading_metrics
 from security import (
     ALGORITHM,
     SECRET_KEY,
@@ -87,3 +89,25 @@ def test_pagination_formula_and_clamping():
     limit, offset = calculate_pagination(page=1, limit=50000, max_limit=100)
     assert limit == 100
     assert offset == 0
+
+
+def test_reading_time_and_word_count_calculation():
+    """Unit Test: Reading time and word count formula (200 words/min, min 1 min)."""
+    # Empty string
+    assert calculate_reading_metrics("") == (1, 0)
+
+    # Short content (< 200 words)
+    short_text = "Hello world from FastAPI backend!"
+    assert calculate_reading_metrics(short_text) == (1, 5)
+
+    # Exactly 200 words -> 1 min
+    two_hundred = " ".join(["word"] * 200)
+    assert calculate_reading_metrics(two_hundred) == (1, 200)
+
+    # 201 words -> 2 min
+    two_hundred_one = " ".join(["word"] * 201)
+    assert calculate_reading_metrics(two_hundred_one) == (2, 201)
+
+    # 650 words -> 4 min
+    long_text = " ".join(["word"] * 650)
+    assert calculate_reading_metrics(long_text) == (4, 650)

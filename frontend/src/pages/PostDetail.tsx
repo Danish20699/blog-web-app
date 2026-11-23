@@ -110,8 +110,8 @@ export const PostDetail: React.FC<PostDetailProps> = ({ onNotify }) => {
   }
 
   const isAuthor = user?.id === blog.author_id;
-  const words = blog.content.split(/\s+/).length;
-  const readTime = Math.max(1, Math.round(words / 180));
+  const words = blog.word_count || blog.content.split(/\s+/).length;
+  const readTime = blog.reading_time || Math.max(1, Math.round(words / 200));
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6">

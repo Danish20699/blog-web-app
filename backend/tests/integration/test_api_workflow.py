@@ -117,6 +117,14 @@ def test_complete_user_and_blog_workflow(client: TestClient):
     found_blog = next((b for b in blogs if b["id"] == blog_id), None)
     assert found_blog is not None
     assert found_blog["author_name"] == "Carol Danvers"
+    assert found_blog["reading_time"] == 1
+    assert found_blog["word_count"] == 9
+
+    # 5b. Fetch Single Blog Detail (Verifies dynamic reading metrics)
+    detail_res = client.get(f"/blog/{blog_id}")
+    assert detail_res.status_code == 200
+    assert detail_res.json()["reading_time"] == 1
+    assert detail_res.json()["word_count"] == 9
 
     # 6. Add Comment
     comment_payload = {"text": "Great explanation of NGINX reverse proxies!"}

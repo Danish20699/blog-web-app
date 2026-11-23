@@ -16,8 +16,8 @@ export const BlogCard: React.FC<BlogCardProps> = ({ blog, onDelete, onNotify }) 
   const [hasLiked, setHasLiked] = useState(false);
   const isAuthor = user?.id === blog.author_id;
 
-  const words = blog.content.split(/\s+/).length;
-  const readTime = Math.max(1, Math.round(words / 180));
+  const words = blog.word_count || blog.content.split(/\s+/).length;
+  const readTime = blog.reading_time || Math.max(1, Math.round(words / 200));
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
